@@ -11,9 +11,16 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    
+    // data saved to pList file
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // if Todo List array exists, load
+        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+            itemArray = items
+        }
         
     }
     
@@ -50,6 +57,8 @@ class TodoListViewController: UITableViewController {
             let newThing: String = textField.text ?? "empty text"
             print("about to add:\t\(newThing)")
             self.itemArray.append(newThing)
+            // save to default local data
+            self.defaults.setValue(self.itemArray, forKey: "ToDoListArray")
             self.tableView.reloadData()
         }
         // add text field to popup alert
