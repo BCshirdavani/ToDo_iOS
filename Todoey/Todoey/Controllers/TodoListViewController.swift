@@ -11,12 +11,16 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     // data saved to pList file
-    let defaults = UserDefaults.standard
+//    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        print("dataFilePath:\t\(dataFilePath)")
         
         let newItem1 = Item()
         newItem1.title = "Find Mike"
@@ -27,12 +31,6 @@ class TodoListViewController: UITableViewController {
         let newItem3 = Item()
         newItem3.title = "Destroy Demagorgon"
         itemArray.append(newItem3)
-        
-        
-        // if Todo List array exists, load
-        if let items = defaults.array(forKey: "ToDoListArrayItem") as? [Item] {
-            itemArray = items
-        }
         
     }
     
@@ -58,6 +56,7 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // toggle done check for item
         itemArray[indexPath.row].done = !(itemArray[indexPath.row].done)
+        saveItems()
         
         print("Selected row:\t\(indexPath.row)\t\(itemArray[indexPath.row].title)\t\(itemArray[indexPath.row].done)")
         // format of highlight row
@@ -75,7 +74,10 @@ class TodoListViewController: UITableViewController {
             newItem.title = textField.text!
             self.itemArray.append(newItem)
             // save to default local data
-            self.defaults.setValue(self.itemArray, forKey: "ToDoListArrayItem")
+//            self.defaults.setValue(self.itemArray, forKey: "ToDoListArrayItem")
+            // make encoder
+            self.saveItems()
+            
             self.tableView.reloadData()
         }
         // add text field to popup alert
@@ -86,6 +88,17 @@ class TodoListViewController: UITableViewController {
         }
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
+    }
+    
+    // MARK: model manipulation methods
+    func saveItems(){
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("error encoding itemArray:\n\(error)")
+        }
     }
     
 

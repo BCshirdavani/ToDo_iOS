@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         print("-\tdelegate:\t didFinishLaunchingWithOptions")
         // print user defaults file path - for simulator
-        print((NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)).last! as String)
+//        print((NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)).last! as String)
         
         return true
     }
