@@ -10,15 +10,27 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    var itemArray = [Item]()
     
     // data saved to pList file
     let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let newItem1 = Item()
+        newItem1.title = "Find Mike"
+        itemArray.append(newItem1)
+        let newItem2 = Item()
+        newItem2.title = "Buy Eggos"
+        itemArray.append(newItem2)
+        let newItem3 = Item()
+        newItem3.title = "Destroy Demagorgon"
+        itemArray.append(newItem3)
+        
+        
         // if Todo List array exists, load
-        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+        if let items = defaults.array(forKey: "ToDoListArrayItem") as? [Item] {
             itemArray = items
         }
         
@@ -29,23 +41,28 @@ class TodoListViewController: UITableViewController {
         return itemArray.count
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        print("cellForRowAt called")
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+        cell.textLabel?.text = item.title
+        
+        // check mark next to selected cell - toggle with ternary operator
+        //      value = condition ? valueIfTrue : valueIfFalse
+        cell.accessoryType = item.done ? .checkmark : .none
+
         return cell
     }
     
     // MARK: Tableview Delegate Methods
     // when clicking on a cell, do action
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Selected row:\t\(indexPath.row)\t\(itemArray[indexPath.row])")
+        // toggle done check for item
+        itemArray[indexPath.row].done = !(itemArray[indexPath.row].done)
+        
+        print("Selected row:\t\(indexPath.row)\t\(itemArray[indexPath.row].title)\t\(itemArray[indexPath.row].done)")
         // format of highlight row
         tableView.deselectRow(at: indexPath, animated: true)
-        // check mark next to selected cell
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
+        tableView.reloadData()
     }
     
     // MARK: Add new items
@@ -54,11 +71,11 @@ class TodoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // what will happen once the user clicks the "add item" button on the alert
-            let newThing: String = textField.text ?? "empty text"
-            print("about to add:\t\(newThing)")
-            self.itemArray.append(newThing)
+            let newItem = Item()
+            newItem.title = textField.text!
+            self.itemArray.append(newItem)
             // save to default local data
-            self.defaults.setValue(self.itemArray, forKey: "ToDoListArray")
+            self.defaults.setValue(self.itemArray, forKey: "ToDoListArrayItem")
             self.tableView.reloadData()
         }
         // add text field to popup alert
