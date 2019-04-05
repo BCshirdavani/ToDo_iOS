@@ -22,15 +22,8 @@ class TodoListViewController: UITableViewController {
         
         print("dataFilePath:\t\(dataFilePath)")
         
-        let newItem1 = Item()
-        newItem1.title = "Find Mike"
-        itemArray.append(newItem1)
-        let newItem2 = Item()
-        newItem2.title = "Buy Eggos"
-        itemArray.append(newItem2)
-        let newItem3 = Item()
-        newItem3.title = "Destroy Demagorgon"
-        itemArray.append(newItem3)
+        // load the item pList data
+        loadItems()
         
     }
     
@@ -98,6 +91,18 @@ class TodoListViewController: UITableViewController {
             try data.write(to: dataFilePath!)
         } catch {
             print("error encoding itemArray:\n\(error)")
+        }
+    }
+    
+    // load data from pList, and decode the data
+    func loadItems() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding: \(error)")
+            }
         }
     }
     
