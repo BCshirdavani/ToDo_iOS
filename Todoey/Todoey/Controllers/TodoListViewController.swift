@@ -12,12 +12,8 @@ import CoreData
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
-//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     // context for sabing core data
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-    // data saved to pList file
-//    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +22,7 @@ class TodoListViewController: UITableViewController {
         print("directory for .documentDirectory, in .userDomainMask: \n\(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))")
         
         // load the item pList data
-//        loadItems()
+        loadItems()
         
     }
     
@@ -72,7 +68,6 @@ class TodoListViewController: UITableViewController {
             newItem.done = false
             self.itemArray.append(newItem)
             // save to default local data
-            // make encoder
             self.saveItems()
             
             self.tableView.reloadData()
@@ -96,17 +91,15 @@ class TodoListViewController: UITableViewController {
         }
     }
     
-    // load data from pList, and decode the data
-//    func loadItems() {
-//        if let data = try? Data(contentsOf: dataFilePath!) {
-//            let decoder = PropertyListDecoder()
-//            do {
-//                itemArray = try decoder.decode([Item].self, from: data)
-//            } catch {
-//                print("Error decoding: \(error)")
-//            }
-//        }
-//    }
+    // load data from Core Data
+    func loadItems() {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            itemArray = try context.fetch(request)
+        } catch {
+            print("error fetching data from context:\n\(error)")
+        }
+    }
     
 
 
