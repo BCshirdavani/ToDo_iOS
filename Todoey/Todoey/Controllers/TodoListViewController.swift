@@ -21,9 +21,12 @@ class TodoListViewController: UITableViewController {
         // where is data being stoed?
         print("directory for .documentDirectory, in .userDomainMask: \n\(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))")
         
+        // make search bar delegate
+        //      done in GUI, with ctrl + drag to yellow view controller icon
+//        searchBar.delegate = self
+        
         // load the item pList data
         loadItems()
-        
     }
     
     // MARK: Tableview Datasource Methods
@@ -48,6 +51,12 @@ class TodoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // toggle done check for item
         itemArray[indexPath.row].done = !(itemArray[indexPath.row].done)
+        
+        // delete row
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
+        
+        
         saveItems()
         
         print("Selected row:\t\(indexPath.row)\t\(itemArray[indexPath.row].title)\t\(itemArray[indexPath.row].done)")
@@ -92,16 +101,32 @@ class TodoListViewController: UITableViewController {
     }
     
     // load data from Core Data
-    func loadItems() {
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
+    //      using "with" here, allows us to overload the function with different parameters later
+    //          (external + internal parameter)
+    //      default value of Item.fetchRequest() will be used if none specified
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
         do {
             itemArray = try context.fetch(request)
         } catch {
             print("error fetching data from context:\n\(error)")
         }
     }
+
     
-
-
 }
 
+
+// MARK: Search Bar Methods
+extension TodoListViewController: UISearchBarDelegate {
+    // search bar delegate methods
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        print("searching: \(searchBar.text!)")
+        // search and filter data that contains the searched text in the title
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        // sort the data you get back
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        // load the items from the search
+        loadItems(with: request)    // using overloaded parameters
+    }
+}
