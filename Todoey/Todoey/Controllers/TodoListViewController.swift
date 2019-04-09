@@ -110,6 +110,7 @@ class TodoListViewController: UITableViewController {
         } catch {
             print("error fetching data from context:\n\(error)")
         }
+        tableView.reloadData()
     }
 
     
@@ -129,4 +130,19 @@ extension TodoListViewController: UISearchBarDelegate {
         // load the items from the search
         loadItems(with: request)    // using overloaded parameters
     }
+    
+    //
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            // make keyboard go away after clearing search
+            //  grab main thread, from the dispatch queue
+            //  to dismiss the search bar, even while background tasks are happening in other threads
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            } 
+        }
+    }
+    
+    
 }
