@@ -29,6 +29,8 @@ class TodoListViewController: UITableViewController {
         loadItems()
     }
     
+    
+    
     // MARK: Tableview Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
@@ -140,7 +142,7 @@ extension TodoListViewController: UISearchBarDelegate {
             //  to dismiss the search bar, even while background tasks are happening in other threads
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
-            } 
+            }
         }
     }
     
