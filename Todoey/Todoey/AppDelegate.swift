@@ -17,19 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // testing with Realm data
-        print("* * * * * *\nRealm Data File Location:\n", Realm.Configuration.defaultConfiguration.fileURL)
-        let data = Data()
-        data.name = "George"
-        data.age = 34
+
+    
         do {
             let realm = try Realm()
-            try realm.write {
-                print("realm.write: \(data)")
-                realm.add(data)
-            }
         } catch {
-            print("* * * * * *\nError initializing/writing realm, \(error)")
+            print("* * * * * *\nError initializing realm, \(error)")
         }
         return true
     }
