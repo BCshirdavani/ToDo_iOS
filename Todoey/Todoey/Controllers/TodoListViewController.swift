@@ -7,50 +7,45 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class TodoListViewController: UITableViewController {
     
-    var itemArray = [Item]()
+    var todoItems: Results<Item>?
+    let realm = try! Realm()
+    
     var selectedCategory : Category? {
         // do this next line, as soon as this varaible gets set with a value
         didSet{
-//            loadItems()
+            loadItems()
         }
     }
-    // context for sabing core data
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // where is data being stoed?
         print("directory for .documentDirectory, in .userDomainMask: \n\(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))")
-        
-        // make search bar delegate
-        //      done in GUI, with ctrl + drag to yellow view controller icon
-//        searchBar.delegate = self
-        
-        // load the item pList data
-//        loadItems()
+
     }
     
     
     
     // MARK: Tableview Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return todoItems?.count ?? 1
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         print("cellForRowAt called")
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        let item = itemArray[indexPath.row]
-        cell.textLabel?.text = item.title
-        
-        // check mark next to selected cell - toggle with ternary operator
-        //      value = condition ? valueIfTrue : valueIfFalse
-        cell.accessoryType = item.done ? .checkmark : .none
-
+        if let item = todoItems?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            // check mark next to selected cell - toggle with ternary operator
+            cell.accessoryType = item.done ? .checkmark : .none
+        } else {
+            cell.textLabel?.text = "No Items Added"
+        }
         return cell
     }
     
@@ -58,19 +53,14 @@ class TodoListViewController: UITableViewController {
     // when clicking on a cell, do action
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // toggle done check for item
-        itemArray[indexPath.row].done = !(itemArray[indexPath.row].done)
-        
+//        todoItems[indexPath.row].done = !(todoItems[indexPath.row].done)
         // delete row
 //        context.delete(itemArray[indexPath.row])
 //        itemArray.remove(at: indexPath.row)
-        
-        
-        saveItems()
-        
-        print("Selected row:\t\(indexPath.row)\t\(itemArray[indexPath.row].title)\t\(itemArray[indexPath.row].done)")
+//        saveItems()
         // format of highlight row
         tableView.deselectRow(at: indexPath, animated: true)
-        tableView.reloadData()
+//        tableView.reloadData()
     }
     
     // MARK: Add new items
@@ -80,15 +70,20 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // what will happen once the user clicks the "add item" button on the alert
             
-//            let newItem = Item(context: self.context)
-//            newItem.title = textField.text!
-//            newItem.done = false
-//            newItem.parentCategory = self.selectedCategory
-//            self.itemArray.append(newItem)
-//            // save to default local data
-            self.saveItems()
-            
-//            self.tableView.reloadData()
+            if let currentCategory = self.selectedCategory {
+                do {
+                    try self.realm.write {
+                        let newItem = Item()
+                        newItem.title = textField.text!
+                        currentCategory.items.append(newItem)
+                    }
+                } catch {
+                    print("error saving thing: \(error)")
+                }
+            }
+            // save to default local data
+//            self.saveItems()
+            self.tableView.reloadData()
         }
         // add text field to popup alert
         alert.addTextField { (alertTextField) in
@@ -102,34 +97,19 @@ class TodoListViewController: UITableViewController {
     
     // MARK: model manipulation methods
     func saveItems(){
-        do {
-            try context.save()
-        } catch {
-            print("error saving context:\n\(error)")
-        }
+//        do {
+//            try context.save()
+//        } catch {
+//            print("error saving context:\n\(error)")
+//        }
     }
     
-    // load data from Core Data
-    //      using "with" here, allows us to overload the function with different parameters later
-    //          (external + internal parameter)
-    //      default value of Item.fetchRequest() will be used if none specified
-//    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
-//        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-//
-//        // must use optional binding, to ensure that you're not unwrapping a nil value
-//        if let additionalPredicate = predicate {
-//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-//        } else {
-//            request.predicate = categoryPredicate
-//        }
-//
-//        do {
-//            itemArray = try context.fetch(request)
-//        } catch {
-//            print("error fetching data from context:\n\(error)")
-//        }
-//        tableView.reloadData()
-//    }
+    // load data from Realm
+    func loadItems() {
+        todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        
+        tableView.reloadData()
+    }
 
     
 }
