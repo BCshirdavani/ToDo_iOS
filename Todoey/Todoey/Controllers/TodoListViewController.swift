@@ -79,6 +79,7 @@ class TodoListViewController: UITableViewController {
                     try self.realm.write {
                         let newItem = Item()
                         newItem.title = textField.text!
+                        newItem.dateCreated = Date()
                         currentCategory.items.append(newItem)
                     }
                 } catch {
@@ -111,7 +112,6 @@ class TodoListViewController: UITableViewController {
     // load data from Realm
     func loadItems() {
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
-        
         tableView.reloadData()
     }
 
@@ -120,31 +120,25 @@ class TodoListViewController: UITableViewController {
 
 
 // MARK: Search Bar Methods
-//extension TodoListViewController: UISearchBarDelegate {
-//    // search bar delegate methods
-//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        let request : NSFetchRequest<Item> = Item.fetchRequest()
-//        print("searching: \(searchBar.text!)")
-//        // search and filter data that contains the searched text in the title
-//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-//        // sort the data you get back
-//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-//        // load the items from the search
-//        loadItems(with: request, predicate: predicate)    // using overloaded parameters
-//    }
-//
-//    //
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        if searchBar.text?.count == 0 {
-//            loadItems()
-//            // make keyboard go away after clearing search
-//            //  grab main thread, from the dispatch queue
-//            //  to dismiss the search bar, even while background tasks are happening in other threads
-//            DispatchQueue.main.async {
-//                searchBar.resignFirstResponder()
-//            }
-//        }
-//    }
-//
-//
-//}
+extension TodoListViewController: UISearchBarDelegate {
+    // search bar delegate methods
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
+        tableView.reloadData()
+    }
+
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            // make keyboard go away after clearing search
+            //  grab main thread, from the dispatch queue
+            //  to dismiss the search bar, even while background tasks are happening in other threads
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+
+
+}
