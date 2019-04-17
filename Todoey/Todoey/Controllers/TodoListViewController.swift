@@ -33,6 +33,7 @@ class TodoListViewController: UITableViewController {
     
     
     // MARK: Tableview Datasource Methods
+    // ------------- reloadData() calls datasource methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todoItems?.count ?? 1
     }
@@ -100,19 +101,11 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    // MARK: model manipulation methods
-    func saveItems(){
-//        do {
-//            try context.save()
-//        } catch {
-//            print("error saving context:\n\(error)")
-//        }
-    }
     
     // load data from Realm
     func loadItems() {
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
-        tableView.reloadData()
+        tableView.reloadData() // reloadData() calls datasource methods
     }
 
     
@@ -123,6 +116,7 @@ class TodoListViewController: UITableViewController {
 extension TodoListViewController: UISearchBarDelegate {
     // search bar delegate methods
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // filter and sort the items
         todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: true)
         tableView.reloadData()
     }

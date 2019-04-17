@@ -23,6 +23,7 @@ class CategoryViewController: UITableViewController {
 
     
     // MARK: TableView data source methods
+    // ---------- called by reloadData()
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // nil coalescing operator
         //      if categories !=  nil, return count
@@ -56,11 +57,12 @@ class CategoryViewController: UITableViewController {
         
         categories = realm.objects(Category.self)
         
-        tableView.reloadData()
+        tableView.reloadData()  // reloadData() calls all the datasource methods
     }
     
     
     //MARK: TableView delegation methods
+    // ----------- called when we click a cell
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "goToItems", sender: self)
     }
