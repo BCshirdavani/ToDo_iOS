@@ -16,6 +16,7 @@
 		D084EB8F2252E0D1008BA111 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D084EB8D2252E0D1008BA111 /* LaunchScreen.storyboard */; };
 		D0B22D02226172080085A550 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B22D01226172080085A550 /* Item.swift */; };
 		D0B22D04226172130085A550 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B22D03226172130085A550 /* Category.swift */; };
+		D0C481DA226FF235004A5036 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C481D9226FF235004A5036 /* SwipeTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		D084EB902252E0D1008BA111 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D0B22D01226172080085A550 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		D0B22D03226172130085A550 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		D0C481D9226FF235004A5036 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		DA5C42BF8B1716FA67713FEC /* Pods_Todoey.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Todoey.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -77,6 +79,7 @@
 			children = (
 				D01536F4225D494D00E09167 /* CategoryViewController.swift */,
 				D084EB862252E0D0008BA111 /* TodoListViewController.swift */,
+				D0C481D9226FF235004A5036 /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -257,6 +260,7 @@
 				D01536F5225D494D00E09167 /* CategoryViewController.swift in Sources */,
 				D084EB872252E0D0008BA111 /* TodoListViewController.swift in Sources */,
 				D084EB852252E0D0008BA111 /* AppDelegate.swift in Sources */,
+				D0C481DA226FF235004A5036 /* SwipeTableViewController.swift in Sources */,
 				D0B22D04226172130085A550 /* Category.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
